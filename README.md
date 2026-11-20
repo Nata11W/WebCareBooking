@@ -4,7 +4,7 @@
 
 > **CSE326 – Internet Programming** · Individual project · Lovely Professional University
 > Windyam Natacha ZOUNGRANA · Reg. No. 12600261 · Section K2P26AC
-> Submitted to **Dr. Parminder Singh** · 06 November 2026
+> Submitted to **Dr. Parminder Singh** · 20 November 2026
 
 **Live demo:** https://nata11w.github.io/WebCareBooking/  
 **Repository:** https://github.com/Nata11W/WebCareBooking
