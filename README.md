@@ -6,8 +6,8 @@
 > Windyam Natacha ZOUNGRANA · Reg. No. 12600261 · Section K2P26AC
 > Submitted to **Dr. Parminder Singh** · 06 November 2026
 
-**Live demo:** https://nata11w.github.io/webcarebooking/  
-**Repository:** https://github.com/Nata11W/webcarebooking
+**Live demo:** https://nata11w.github.io/WebCareBooking/  
+**Repository:** https://github.com/Nata11W/WebCareBooking
 
 ---
 
@@ -109,18 +109,18 @@ A real version would need a server: the server creates the order with a provider
 
 ## Deploy on GitHub Pages
 
-1. Sign in to GitHub as **Nata11W** and create a public repository named `webcarebooking`.
+1. Sign in to GitHub as **Nata11W** and create a public repository named `WebCareBooking`.
 2. Push this folder:
    ```bash
    git init
    git add .
    git commit -m "Initial version of WebCareBooking"
    git branch -M main
-   git remote add origin https://github.com/Nata11W/webcarebooking.git
+   git remote add origin https://github.com/Nata11W/WebCareBooking.git
    git push -u origin main
    ```
 3. On GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: `main` / `(root)` → Save**.
-4. After about a minute the site is live at https://nata11w.github.io/webcarebooking/.
+4. After about a minute the site is live at https://nata11w.github.io/WebCareBooking/.
 
 ## Limitations
 
