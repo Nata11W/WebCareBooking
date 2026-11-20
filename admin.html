@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Clinic dashboard: manage doctors, clinics, working hours and appointments.">
+  <title>Clinic dashboard – WebCareBooking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ══ NAVBAR ══ -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text"><span class="logo-name">WebCareBooking</span><span class="logo-sub">Doctor appointments, 24/7</span></span>
+      </a>
+      <nav aria-label="Main navigation">
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Open the menu"><span></span><span></span><span></span></button>
+        <ul id="nav-menu" class="nav-menu">
+          <li><a class="nav-link" href="index.html">Home</a></li>
+          <li><a class="nav-link" href="index.html#doctors">Doctors</a></li>
+          <li><a class="nav-link" href="book.html">Book appointment</a></li>
+          <li><a class="nav-link" href="admin.html" aria-current="page">Clinic dashboard</a></li>
+          <li class="nav-actions">
+            <a class="btn-whatsapp" href="index.html#clinics">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>
+              Call a clinic
+            </a>
+            <button class="theme-toggle" type="button" aria-label="Switch between dark and light mode"><span aria-hidden="true">◐</span></button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container page">
+
+    <!-- ============ ADMIN LOGIN ============ -->
+    <section id="admin-login" class="auth auth-narrow" aria-labelledby="admin-login-title" hidden>
+      <h1 id="admin-login-title" class="page-title">Clinic <span>dashboard</span></h1>
+      <p class="muted">For doctors and clinic staff.</p>
+      <form id="admin-login-form" class="panel form" novalidate>
+        <div class="field">
+          <label for="admin-email">Staff email</label>
+          <input type="email" id="admin-email" name="email" autocomplete="username" required>
+          <p class="error" id="admin-email-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="admin-password">Password</label>
+          <input type="password" id="admin-password" name="password" autocomplete="current-password" required>
+          <p class="error" id="admin-password-error" aria-live="polite"></p>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        <p class="hint">Demo login: <code>admin@webcare.com</code> / <code>Admin@123</code></p>
+      </form>
+    </section>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section id="admin-app" hidden>
+      <div class="page-head">
+        <h1 class="page-title">Clinic <span>dashboard</span></h1>
+        <button type="button" id="admin-logout" class="btn btn-ghost">Log out</button>
+      </div>
+
+      <section class="stats" aria-label="Key figures">
+        <article class="stat"><p class="stat-value" id="stat-today">0</p><p class="stat-label">Booked for today</p></article>
+        <article class="stat"><p class="stat-value" id="stat-upcoming">0</p><p class="stat-label">Upcoming</p></article>
+        <article class="stat"><p class="stat-value" id="stat-completed">0</p><p class="stat-label">Completed</p></article>
+        <article class="stat"><p class="stat-value" id="stat-cancel">0%</p><p class="stat-label">Cancelled</p></article>
+      </section>
+
+      <section class="panel" aria-labelledby="appts-title">
+        <div class="panel-head">
+          <h2 id="appts-title">Appointments</h2>
+          <button type="button" id="export-btn" class="btn btn-small btn-ghost">Export CSV</button>
+        </div>
+        <form id="filter-form" class="filters">
+          <div class="field">
+            <label for="filter-doctor">Doctor</label>
+            <select id="filter-doctor" name="doctor"></select>
+          </div>
+          <div class="field">
+            <label for="filter-date">Date</label>
+            <input type="date" id="filter-date" name="date">
+          </div>
+          <div class="field">
+            <label for="filter-status">Status</label>
+            <select id="filter-status" name="status">
+              <option value="all">All</option>
+              <option value="booked">Booked</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <button type="reset" class="btn btn-ghost btn-small">Clear filters</button>
+        </form>
+        <div class="table-wrap">
+          <table class="table">
+            <caption class="sr-only">List of appointments</caption>
+            <thead>
+              <tr>
+                <th scope="col">Date</th><th scope="col">Time</th><th scope="col">Token</th><th scope="col">Doctor</th>
+                <th scope="col">Patient</th><th scope="col">Reason</th><th scope="col">Status</th><th scope="col">Booking fee</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appt-body"></tbody>
+          </table>
+        </div>
+        <p id="appt-empty" class="muted">No appointments match these filters.</p>
+      </section>
+
+      <!-- ===== PAYMENTS & SUBSCRIPTIONS ===== -->
+      <section class="panel" aria-labelledby="pay-title">
+        <div class="panel-head">
+          <h2 id="pay-title">Payments</h2>
+          <span class="demo-flag">Demo, no real money</span>
+        </div>
+        <div class="money-row" aria-label="Booking fees">
+          <div class="money"><p class="money-value" id="fees-received">₹0</p><p class="money-label">Booking fees received</p></div>
+          <div class="money"><p class="money-value" id="fees-collect">₹0</p><p class="money-label">To collect at the reception</p></div>
+          <div class="money"><p class="money-value" id="fees-refunded">₹0</p><p class="money-label">Refunded to patients</p></div>
+        </div>
+
+        <h3 class="sub-title">Clinic subscriptions</h3>
+        <p class="muted">Each clinic or hospital pays a monthly plan to use WebCareBooking. When a plan ends, patients can no longer book that clinic online, but they still see its phone number.</p>
+        <ul id="sub-list" class="sub-list"></ul>
+      </section>
+
+      <div class="layout-2col">
+        <!-- ===== DOCTORS ===== -->
+        <section class="panel" aria-labelledby="doctors-title">
+          <h2 id="doctors-title">Doctors</h2>
+          <ul id="doctor-admin-list" class="doctor-admin-list"></ul>
+
+          <form id="doctor-form" class="form doctor-form" novalidate>
+            <h3 id="doctor-form-title">Add a doctor</h3>
+            <input type="hidden" name="id" id="doc-id">
+            <div class="photo-field">
+              <div id="doc-photo-preview" class="photo-preview" aria-live="polite"></div>
+              <div class="field">
+                <label for="doc-photo">Photo</label>
+                <input type="file" id="doc-photo" name="photo" accept="image/jpeg,image/png,image/webp,image/gif" aria-describedby="photo-hint">
+                <p class="hint" id="photo-hint">A clear face photo, JPG or PNG, under 5 MB. It is cropped to a square.</p>
+                <p class="error" id="doc-photo-error" aria-live="polite"></p>
+                <button type="button" id="doc-photo-remove" class="link-btn link-danger" hidden>Remove photo</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="doc-name">Name</label>
+              <input type="text" id="doc-name" name="docname" placeholder="Dr. Firstname Lastname" required>
+              <p class="error" id="doc-name-error" aria-live="polite"></p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="doc-specialty">Specialty</label>
+                <select id="doc-specialty" name="specialty" required>
+                  <option value="">Choose…</option>
+                  <option>General Medicine</option>
+                  <option>Pediatrics</option>
+                  <option>Dermatology</option>
+                  <option>Cardiology</option>
+                  <option>Gynecology</option>
+                  <option>Dentistry</option>
+                  <option>Ophthalmology</option>
+                  <option>Orthopedics</option>
+                  <option>ENT</option>
+                </select>
+                <p class="error" id="doc-specialty-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="doc-clinic">Clinic</label>
+                <select id="doc-clinic" name="clinic" required></select>
+                <p class="error" id="doc-clinic-error" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="doc-experience">Years of experience</label>
+                <input type="number" id="doc-experience" name="experience" min="0" max="60" step="1">
+                <p class="error" id="doc-experience-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="doc-languages">Languages</label>
+                <input type="text" id="doc-languages" name="languages" placeholder="Hindi, English">
+              </div>
+            </div>
+            <div class="field">
+              <label for="doc-bio">Short description for patients</label>
+              <textarea id="doc-bio" name="bio" rows="3" maxlength="240" placeholder="What this doctor helps with"></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="doc-submit" class="btn btn-primary">Add doctor</button>
+              <button type="button" id="doc-cancel" class="btn btn-ghost" hidden>Cancel editing</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ===== WORKING HOURS ===== -->
+        <section class="panel" aria-labelledby="sched-title">
+          <h2 id="sched-title">Working hours</h2>
+          <form id="schedule-form" novalidate>
+            <div class="field">
+              <label for="sched-doctor">Doctor</label>
+              <select id="sched-doctor"></select>
+            </div>
+            <fieldset>
+              <legend>Weekly schedule</legend>
+              <div id="hours-rows"></div>
+            </fieldset>
+            <div class="field-row">
+              <div class="field">
+                <label for="slot-length">Appointment length</label>
+                <select id="slot-length">
+                  <option value="15">15 minutes</option>
+                  <option value="20">20 minutes</option>
+                  <option value="30">30 minutes</option>
+                  <option value="45">45 minutes</option>
+                  <option value="60">60 minutes</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="break-start">Break from</label>
+                <input type="time" id="break-start" step="900">
+              </div>
+              <div class="field">
+                <label for="break-end">Break until</label>
+                <input type="time" id="break-end" step="900">
+                <p class="error" id="break-end-error" aria-live="polite"></p>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save working hours</button>
+          </form>
+        </section>
+      </div>
+
+      <div class="layout-2col">
+        <!-- ===== CLINICS ===== -->
+        <section class="panel" aria-labelledby="clinics-title">
+          <h2 id="clinics-title">Clinics and hospitals</h2>
+          <p class="muted">Patients see these details on the home page and can call the number directly.</p>
+          <form id="clinic-form" class="form" novalidate>
+            <div class="field">
+              <label for="clinic-select">Edit</label>
+              <select id="clinic-select"></select>
+            </div>
+            <div class="field">
+              <label for="clinic-name">Name</label>
+              <input type="text" id="clinic-name" name="name" required>
+              <p class="error" id="clinic-name-error" aria-live="polite"></p>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="clinic-phone">Phone number</label>
+                <input type="tel" id="clinic-phone" name="phone" placeholder="+91 98765 43210" required>
+                <p class="error" id="clinic-phone-error" aria-live="polite"></p>
+              </div>
+              <div class="field">
+                <label for="clinic-email">Email (optional)</label>
+                <input type="email" id="clinic-email" name="email">
+                <p class="error" id="clinic-email-error" aria-live="polite"></p>
+              </div>
+            </div>
+            <div class="field">
+              <label for="clinic-address">Address</label>
+              <input type="text" id="clinic-address" name="address" required>
+              <p class="error" id="clinic-address-error" aria-live="polite"></p>
+            </div>
+            <div class="field">
+              <label for="clinic-hours">Opening hours</label>
+              <input type="text" id="clinic-hours" name="hours" placeholder="Mon to Sat, 9:00 am to 5:00 pm">
+            </div>
+            <button type="submit" id="clinic-submit" class="btn btn-primary">Save clinic</button>
+          </form>
+        </section>
+
+        <section class="panel panel-danger" aria-labelledby="reset-title">
+          <h2 id="reset-title">Demo data</h2>
+          <p class="muted">Erase all patients, appointments and changes stored in this browser, and load the sample clinics and doctors again.</p>
+          <button type="button" id="reset-btn" class="btn btn-danger">Reset demo data</button>
+        </section>
+      </div>
+    </section>
+    <dialog id="sub-dialog" class="pay-dialog" aria-labelledby="sub-pay-title"></dialog>
+  </main>
+
+  <!-- ══ FOOTER ══ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand"><span class="logo-mark" aria-hidden="true"></span>WebCareBooking</p>
+      <nav aria-label="Footer">
+        <div class="footer-links">
+          <a href="index.html">Home</a>
+          <a href="index.html#doctors">Doctors</a>
+          <a href="index.html#clinics">Call a clinic</a>
+          <a href="book.html">Book appointment</a>
+          <a href="admin.html">Clinic dashboard</a>
+          <a href="https://github.com/Nata11W/webcarebooking">Source code on GitHub</a>
+        </div>
+      </nav>
+      <p>&copy; 2026 WebCareBooking. CSE326 Internet Programming project, Lovely Professional University.</p>
+    </div>
+  </footer>
+
+  <script src="js/storage.js"></script>
+  <script src="js/slots.js"></script>
+  <script src="js/validate.js"></script>
+  <script src="js/payments.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/profiles.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
